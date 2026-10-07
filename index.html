@@ -1,754 +1,1250 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#0f1115">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>TIENDA PREMIUM | Streaming & Juegos</title>
+<!-- COLOR DE LA BARRA DEL NAVEGADOR (TEMA OSCURO) -->
+<meta name="theme-color" content="#0f1115">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<title>GARENA SHOP | Premium Store</title>
 
-    <style>
-        :root {
-            --primary: #ff003c;
-            --primary-dark: #c4002e;
-            --bg: #0f1115;
-            --card: #1a1d24;
-            --card2: #20242d;
-            --text: #ffffff;
-            --muted: #9ca3af;
-            --border: rgba(255, 255, 255, 0.08);
-            --success: #00d26a;
-            --warning: #ffaa00;
-            --shadow: 0 10px 25px rgba(0, 0, 0, .35);
-            --radius: 18px;
-        }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<style>
 
-        body {
-            font-family: 'Roboto', sans-serif;
-            background: radial-gradient(circle at top, #1d2330 0%, #0f1115 45%);
-            color: var(--text);
-            min-height: 100vh;
-        }
+:root{
+    --primary:#ff003c;
+    --primary-dark:#c4002e;
+    --bg:#0f1115;
+    --card:#1a1d24;
+    --card2:#20242d;
+    --text:#ffffff;
+    --muted:#9ca3af;
+    --border:rgba(255,255,255,0.08);
+    --success:#00d26a;
+    --warning:#ffaa00; 
 
-        /* UTILIDADES */
-        .hidden { display: none !important; }
-        .text-center { text-align: center; }
-        .flex-center { display: flex; align-items: center; justify-content: center; }
-        .mt-15 { margin-top: 15px; }
+    --shadow:
+        0 10px 25px rgba(0,0,0,.35);
 
-        /* HEADER */
-        header {
-            position: sticky; top: 0; z-index: 100;
-            backdrop-filter: blur(10px);
-            background: rgba(15, 17, 21, .75);
-            border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 16px 22px;
-        }
+    --radius:18px;
+}
 
-        header h1 {
-            font-size: 1.1rem; font-weight: 900; letter-spacing: 1px;
-            display: flex; align-items: center; gap: 10px;
-        }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-        header h1 i { color: var(--primary); }
-        .status { color: var(--success); font-size: .75rem; font-weight: 700; }
+body{
+    font-family:'Roboto',sans-serif;
+    background:
+        radial-gradient(circle at top,#1d2330 0%,#0f1115 45%);
+    color:var(--text);
+    min-height:100vh;
+}
 
-        /* NAVEGACIÓN */
-        .nav-menu { display: flex; align-items: center; margin: 0 20px 0 auto; }
-        .nav-link {
-            display: flex; align-items: center; gap: 8px;
-            background: rgba(255, 255, 255, 0.05); color: #fff;
-            text-decoration: none; font-size: 0.85rem; font-weight: 800;
-            letter-spacing: 0.5px; padding: 10px 16px; border-radius: 12px;
-            border: 1px solid var(--border); transition: 0.3s; cursor: pointer;
-        }
+/* HEADER */
 
-        .nav-link i { color: var(--success); font-size: 1rem; transition: 0.3s; }
-        .nav-link:hover {
-            background: var(--primary); border-color: var(--primary);
-            transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255, 0, 60, .2);
-        }
-        .nav-link:hover i { color: #fff; }
+header{
+    position:sticky;
+    top:0;
+    z-index:100;
+    backdrop-filter:blur(10px);
+    background:rgba(15,17,21,.75);
+    border-bottom:1px solid var(--border);
 
-        /* BANNER */
-        .top-banner { width: 100%; overflow: hidden; background: #111; }
-        .top-banner img { width: 100%; display: block; object-fit: cover; max-height: 260px; transition: opacity 0.3s; opacity: 0.8;}
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
 
-        /* CONTAINER Y TÍTULOS */
-        .container { max-width: 1200px; margin: auto; padding: 25px 18px 80px; }
-        .section-title {
-            margin: 30px 0 18px; font-size: .85rem; font-weight: 900;
-            letter-spacing: 1px; color: #fff; display: flex; align-items: center; gap: 10px;
-        }
-        .section-title::before {
-            content: ""; width: 5px; height: 18px; border-radius: 10px; background: var(--primary);
-        }
+    padding:16px 22px;
+}
 
-        /* GRID Y CARDS */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
-        .card {
-            position: relative; background: linear-gradient(145deg, var(--card2), var(--card));
-            border: 1px solid var(--border); border-radius: var(--radius);
-            padding: 22px 18px; display: flex; flex-direction: column; align-items: center;
-            justify-content: center; transition: .25s ease; cursor: pointer;
-            overflow: hidden; box-shadow: var(--shadow);
-        }
-        .card-row { flex-direction: row; justify-content: space-between; margin-top: 10px; width: 100%; }
-        .card::before {
-            content: ""; position: absolute; inset: 0;
-            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, .05), transparent);
-            transform: translateX(-100%); transition: .6s;
-        }
-        .card:hover::before { transform: translateX(100%); }
-        .card:hover {
-            transform: translateY(-6px); border-color: rgba(255, 0, 60, .45);
-            box-shadow: 0 15px 40px rgba(255, 0, 60, .18);
-        }
+header h1{
+    font-size:1.1rem;
+    font-weight:900;
+    letter-spacing:1px;
 
-        /* IMÁGENES DE PRODUCTOS */
-        .stream-img { object-fit: contain; width: 90px; height: 70px; margin-bottom: 14px; border-radius: 10px; padding: 8px; transition: .25s; }
-        .gem-img { object-fit: contain; width: 72px; margin-bottom: 14px; transition: .25s; }
-        .evo-img { object-fit: contain; width: 60px; transition: .25s; }
-        .booyah-img { object-fit: contain; width: 75px; transition: .25s; }
-        .skin-img { object-fit: contain; width: 90px; height: 90px; margin-bottom: 12px; border-radius: 14px; background: #111; padding: 8px; transition: .25s; }
-        
-        .bg-white { background: #ffffff; }
-        .bg-dark { background: #000000; }
-        .bg-blue { background: #001030; }
-        .card:hover img { transform: scale(1.06); }
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
 
-        /* INFO Y BOTONES */
-        .info { text-align: center; }
-        .price { display: block; font-size: 1rem; font-weight: 800; margin-bottom: 14px; }
-        .btn-buy {
-            width: 100%; padding: 11px; border-radius: 12px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            text-align: center; font-size: .88rem; font-weight: 800; transition: .2s;
-        }
-        .btn-buy-small { width: 90px; }
-        .card:hover .btn-buy { transform: scale(1.03); }
+header h1 i{
+    color:var(--primary);
+}
 
-        /* SECCIÓN COFRES */
-        .cofres-section { background: rgba(255, 255, 255, .03); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
-        .scroll-menu { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; }
-        .scroll-menu::-webkit-scrollbar { display: none; }
-        .chip {
-            min-width: 44px; height: 44px; border-radius: 12px; background: #252a33;
-            color: #fff; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: .2s; font-weight: 700;
-        }
-        .chip:hover { background: #323844; }
-        .chip.active { background: var(--primary); }
+.status{
+    color:var(--success);
+    font-size:.75rem;
+    font-weight:700;
+}
 
-        /* BOTÓN FLOTANTE CONTACTO */
-        .btn-float-contact {
-            position: fixed; bottom: 20px; right: 20px; width: 55px; height: 55px;
-            background: #0088cc; color: #fff; border: none; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); z-index: 990; cursor: pointer; transition: .2s;
-        }
-        .btn-float-contact:hover { transform: scale(1.1); background: #0077b5; }
+/* BANNER */
 
-        /* MODALES */
-        .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0, 0, 0, .7); backdrop-filter: blur(8px);
-            display: none; align-items: center; justify-content: center; padding: 20px; z-index: 1000;
-        }
-        .modal-overlay.active { display: flex; }
-        .modal {
-            width: 100%; max-width: 430px; border-radius: 24px; overflow: hidden;
-            background: #181b22; border: 1px solid var(--border); animation: modal .25s ease;
-        }
-        @keyframes modal { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .modal-header { padding: 20px; text-align: center; background: linear-gradient(135deg, var(--primary), #8f001f); font-weight: 900; letter-spacing: 1px; }
-        .modal-header-support { background: linear-gradient(135deg, #0088cc, #005580); }
-        .modal-body { padding: 24px; }
-        .modal-price-text { text-align: center; font-weight: bold; margin-bottom: 15px; }
-        .modal-price-highlight { color: var(--primary); }
+.top-banner{
+    width:100%;
+    overflow:hidden;
+}
 
-        /* TABS MÉTODOS DE PAGO */
-        .payment-tabs { display: flex; gap: 8px; margin-bottom: 15px; }
-        .tab-btn {
-            flex: 1; background: #20242d; border: 1px solid var(--border); padding: 10px;
-            border-radius: 12px; color: var(--muted); font-size: 0.8rem; font-weight: 700;
-            cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; transition: 0.2s;
-        }
-        .tab-btn i { font-size: 1.1rem; }
-        .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-        .payment-method-content { display: none; }
-        .payment-method-content.active { display: block; }
-        .payment-box { background: #11151c; border: 1px solid rgba(255, 0, 60, .25); padding: 15px; border-radius: 16px; text-align: center; margin-bottom: 15px; }
-        
-        /* FORMULARIOS Y BOTONES INTERNOS */
-        input, textarea {
-            width: 100%; background: #11151c; color: #fff; border: 1px solid var(--border);
-            padding: 14px; border-radius: 14px; margin-bottom: 14px; outline: none; font-family: inherit;
-        }
-        textarea { resize: vertical; min-height: 90px; }
-        input:focus, textarea:focus { border-color: var(--primary); }
-        
-        .file-upload-label {
-            display: block; border: 2px dashed rgba(255, 255, 255, .15); padding: 18px;
-            border-radius: 16px; text-align: center; cursor: pointer; margin-bottom: 18px; transition: .2s;
-        }
-        .file-upload-label:hover { border-color: var(--primary); }
-        
-        .btn-confirm {
-            width: 100%; border: none; padding: 15px; border-radius: 14px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: #fff; font-weight: 900; cursor: pointer; transition: .2s;
-        }
-        .btn-support-submit { background: linear-gradient(135deg, #0088cc, #005580); }
-        .btn-confirm:hover { transform: translateY(-2px); }
-        .btn-cancel { width: 100%; background: none; border: none; margin-top: 15px; color: #9ca3af; cursor: pointer; }
-        
-        .btn-paypal {
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            background: #0070ba; padding: 14px; border-radius: 14px; text-decoration: none;
-            color: #fff; font-weight: 700; transition: .2s; margin-bottom: 15px;
-        }
-        .btn-paypal:hover { transform: translateY(-2px); }
-        
-        hr.divider { margin: 20px 0; border: 0; border-top: 1px solid rgba(255, 255, 255, .1); }
+.top-banner img{
+    width:100%;
+    display:block;
+    object-fit:cover;
+    max-height:260px;
+}
 
-        /* TOAST Y ÉXITO */
-        .toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 350px; }
-        .toast {
-            background: #1e222b; border: 1px solid var(--border); padding: 14px 18px; border-radius: 14px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); display: flex; align-items: center; gap: 12px;
-            animation: slideDown 0.3s ease forwards;
-        }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-        .toast.error { border-color: rgba(255, 0, 60, 0.4); }
-        .toast.error i { color: var(--primary); }
-        .toast.warning { border-color: rgba(255, 170, 0, 0.4); }
-        .toast.warning i { color: var(--warning); }
+/* CONTAINER */
 
-        .success-icon-box {
-            width: 70px; height: 70px; background: rgba(0, 210, 106, 0.15); color: var(--success);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 20px;
-        }
-        .success-title { font-size: 1.4rem; font-weight: 900; margin-bottom: 10px; }
-        .success-msg { color: var(--muted); font-size: 0.95rem; line-height: 1.5; }
-        .btn-success-close {
-            width: 100%; border: none; padding: 14px; border-radius: 14px; background: var(--success);
-            color: #000; font-weight: 900; cursor: pointer; transition: .2s; margin-top: 20px;
-        }
-        .btn-success-close:hover { opacity: 0.9; transform: translateY(-2px); }
+.container{
+    max-width:1200px;
+    margin:auto;
+    padding:25px 18px 80px;
+}
 
-        /* MOBILE */
-        @media(max-width:700px) {
-            .grid { grid-template-columns: 1fr 1fr; }
-            .card { padding: 18px 12px; }
-            .stream-img { width: 75px; height: 60px; }
-            .skin-img { width: 75px; height: 75px; }
-            .hide-mobile { display: none; }
-            .nav-menu { margin-right: 0; }
-        }
-    </style>
+/* TITLES */
+
+.section-title{
+    margin:30px 0 18px;
+
+    font-size:.85rem;
+    font-weight:900;
+    letter-spacing:1px;
+
+    color:#fff;
+
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.section-title::before{
+    content:"";
+    width:5px;
+    height:18px;
+    border-radius:10px;
+    background:var(--primary);
+}
+
+/* GRID */
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:18px;
+}
+
+/* CARD */
+
+.card{
+    position:relative;
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--card2),
+            var(--card)
+        );
+
+    border:1px solid var(--border);
+
+    border-radius:var(--radius);
+
+    padding:22px 18px;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+
+    transition:.25s ease;
+    cursor:pointer;
+
+    overflow:hidden;
+
+    box-shadow:var(--shadow);
+}
+
+.card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+
+    background:
+        linear-gradient(
+            120deg,
+            transparent,
+            rgba(255,255,255,.05),
+            transparent
+        );
+
+    transform:translateX(-100%);
+    transition:.6s;
+}
+
+.card:hover::before{
+    transform:translateX(100%);
+}
+
+.card:hover{
+    transform:translateY(-6px);
+    border-color:rgba(255,0,60,.45);
+    box-shadow:
+        0 15px 40px rgba(255,0,60,.18);
+}
+
+/* IMAGES */
+
+.gem-img,
+.evo-img,
+.booyah-img,
+.skin-img{
+    object-fit:contain;
+    transition:.25s;
+}
+
+.gem-img{
+    width:72px;
+    margin-bottom:14px;
+}
+
+.evo-img{
+    width:60px;
+}
+
+.booyah-img{
+    width:75px;
+}
+
+.skin-img{
+    width:90px;
+    height:90px;
+    margin-bottom:12px;
+    border-radius:14px;
+    background:#111;
+    padding:8px;
+}
+
+.card:hover img{
+    transform:scale(1.06);
+}
+
+/* INFO */
+
+.info{
+    text-align:center;
+}
+
+.price{
+    display:block;
+    font-size:1rem;
+    font-weight:800;
+    margin-bottom:14px;
+}
+
+/* BUTTON */
+
+.btn-buy{
+    width:100%;
+    padding:11px;
+
+    border-radius:12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--primary),
+            var(--primary-dark)
+        );
+
+    text-align:center;
+
+    font-size:.88rem;
+    font-weight:800;
+
+    transition:.2s;
+}
+
+.card:hover .btn-buy{
+    transform:scale(1.03);
+}
+
+/* EVO SECTION */
+
+.cofres-section{
+    background:rgba(255,255,255,.03);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:20px;
+}
+
+.scroll-menu{
+    display:flex;
+    gap:10px;
+    overflow-x:auto;
+    padding-bottom:10px;
+}
+
+.scroll-menu::-webkit-scrollbar{
+    display:none;
+}
+
+.chip{
+    min-width:44px;
+    height:44px;
+
+    border-radius:12px;
+
+    background:#252a33;
+    color:#fff;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    cursor:pointer;
+
+    transition:.2s;
+    font-weight:700;
+}
+
+.chip:hover{
+    background:#323844;
+}
+
+.chip.active{
+    background:var(--primary);
+}
+
+/* BOTÓN FLOTANTE CONTACTO */
+.btn-float-contact {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 55px;
+    height: 55px;
+    background: #0088cc;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    z-index: 990;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.btn-float-contact:hover {
+    transform: scale(1.1);
+    background: #0077b5;
+}
+
+/* MODAL */
+
+.modal-overlay{
+    position:fixed;
+    inset:0;
+
+    background:rgba(0,0,0,.7);
+    backdrop-filter:blur(8px);
+
+    display:none;
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+
+    z-index:1000;
+}
+
+.modal{
+    width:100%;
+    max-width:430px;
+
+    border-radius:24px;
+
+    overflow:hidden;
+
+    background:#181b22;
+
+    border:1px solid var(--border);
+
+    animation:modal .25s ease;
+}
+
+@keyframes modal{
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.modal-header{
+    padding:20px;
+
+    text-align:center;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--primary),
+            #8f001f
+        );
+
+    font-weight:900;
+    letter-spacing:1px;
+}
+
+.modal-body{
+    padding:24px;
+}
+
+/* TABS MÉTODOS DE PAGO */
+.payment-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.tab-btn {
+    flex: 1;
+    background: #20242d;
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 12px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    transition: 0.2s;
+}
+
+.tab-btn i {
+    font-size: 1.1rem;
+}
+
+.tab-btn.active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+}
+
+.payment-method-content {
+    display: none;
+}
+
+.payment-method-content.active {
+    display: block;
+}
+
+.payment-box{
+    background:#11151c;
+    border:1px solid rgba(255,0,60,.25);
+
+    padding:15px;
+    border-radius:16px;
+
+    text-align:center;
+
+    margin-bottom:15px;
+}
+
+.btn-paypal{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+
+    background:#0070ba;
+
+    padding:14px;
+
+    border-radius:14px;
+
+    text-decoration:none;
+    color:#fff;
+
+    font-weight:700;
+
+    transition:.2s;
+    margin-bottom: 15px;
+}
+
+.btn-paypal:hover{
+    transform:translateY(-2px);
+}
+
+/* INPUTS Y TEXTAREA */
+
+input, textarea{
+    width:100%;
+
+    background:#11151c;
+    color:#fff;
+
+    border:1px solid var(--border);
+
+    padding:14px;
+
+    border-radius:14px;
+
+    margin-bottom:14px;
+
+    outline:none;
+    font-family: inherit;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 90px;
+}
+
+input:focus, textarea:focus{
+    border-color:var(--primary);
+}
+
+.file-upload-label{
+    display:block;
+
+    border:2px dashed rgba(255,255,255,.15);
+
+    padding:18px;
+
+    border-radius:16px;
+
+    text-align:center;
+
+    cursor:pointer;
+
+    margin-bottom:18px;
+
+    transition:.2s;
+}
+
+.file-upload-label:hover{
+    border-color:var(--primary);
+}
+
+/* CONFIRM BUTTON */
+
+.btn-confirm{
+    width:100%;
+
+    border:none;
+
+    padding:15px;
+
+    border-radius:14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--primary),
+            var(--primary-dark)
+        );
+
+    color:#fff;
+
+    font-weight:900;
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.btn-confirm:hover{
+    transform:translateY(-2px);
+}
+
+/* TOAST (NOTIFICACIONES) */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 90%;
+    max-width: 350px;
+}
+
+.toast {
+    background: #1e222b;
+    border: 1px solid var(--border);
+    padding: 14px 18px;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: slideDown 0.3s ease forwards;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.toast.error {
+    border-color: rgba(255, 0, 60, 0.4);
+}
+.toast.error i { color: var(--primary); }
+
+.toast.warning {
+    border-color: rgba(255, 170, 0, 0.4);
+}
+.toast.warning i { color: var(--warning); }
+
+/* MODAL DE ÉXITO */
+.success-icon-box {
+    width: 70px;
+    height: 70px;
+    background: rgba(0, 210, 106, 0.15);
+    color: var(--success);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin: 0 auto 20px;
+}
+
+.btn-success-close {
+    width: 100%;
+    border: none;
+    padding: 14px;
+    border-radius: 14px;
+    background: var(--success);
+    color: #000;
+    font-weight: 900;
+    cursor: pointer;
+    transition: .2s;
+    margin-top: 20px;
+}
+
+.btn-success-close:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+/* MOBILE */
+
+@media(max-width:700px){
+
+    .grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .card{
+        padding:18px 12px;
+    }
+
+    .skin-img{
+        width:75px;
+        height:75px;
+    }
+}
+
+</style>
 </head>
+
 <body>
 
-    <div id="toastContainer" class="toast-container"></div>
+<div id="toastContainer" class="toast-container"></div>
 
-    <div class="top-banner">
-        <img id="main-banner" src="https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?q=80&w=2069&auto=format&fit=crop" alt="Banner">
+<div class="top-banner">
+    <img src="https://iili.io/CBvYfEP.png" alt="Banner">
+</div>
+
+<header>
+    <h1>
+        <i class="fas fa-bolt"></i>
+        PAGOS SHOP
+    </h1>
+
+    <div class="status">
+        ● SERVIDOR ACTIVO
+    </div>
+</header>
+
+<div class="container">
+
+    <div class="section-title">
+        PAQUETES DE DIAMANTES
     </div>
 
-    <header>
-        <h1 id="main-title">
-            <i class="fas fa-play-circle"></i> STREAMING SHOP
-        </h1>
+    <div class="grid">
 
-        <nav class="nav-menu" id="nav-streaming">
-            <button onclick="switchView('garena')" class="nav-link">
-                <i class="fas fa-gem"></i> FF Shop
+        <div class="card" onclick="openPayment('110 Diamantes', '$18 MXN')">
+            <img src="https://iili.io/BmAodGV.png" class="gem-img">
+
+            <div class="info">
+                <span class="price">110 Diamantes</span>
+            </div>
+
+            <div class="btn-buy">$18 MXN</div>
+        </div>
+
+        <div class="card" onclick="openPayment('341 Diamantes', '$55 MXN')">
+            <img src="https://iili.io/BmAodGV.png" class="gem-img">
+
+            <div class="info">
+                <span class="price">341 Diamantes</span>
+            </div>
+
+            <div class="btn-buy">$55 MXN</div>
+        </div>
+
+        <div class="card" onclick="openPayment('572 Diamantes', '$95 MXN')">
+            <img src="https://iili.io/BmAodGV.png" class="gem-img">
+
+            <div class="info">
+                <span class="price">572 Diamantes</span>
+            </div>
+
+            <div class="btn-buy">$95 MXN</div>
+        </div>
+
+        <div class="card" onclick="openPayment('1166 Diamantes', '$175 MXN')">
+            <img src="https://iili.io/BmAodGV.png" class="gem-img">
+
+            <div class="info">
+                <span class="price">1166 Diamantes</span>
+            </div>
+
+            <div class="btn-buy">$175 MXN</div>
+        </div>
+
+      
+        <div class="card" onclick="openPayment('6160 Diamantes', '$740 MXN')">
+            <img src="https://iili.io/BmAodGV.png" class="gem-img">
+            <div class="info">
+                <span class="price">6160 Diamantes</span>
+            </div>
+            <div class="btn-buy">$740 MXN</div>
+        </div>
+
+    </div>
+
+    <div class="section-title">
+        SELECCIÓN DE COFRES EVO
+    </div>
+
+    <div class="cofres-section">
+
+        <div class="scroll-menu" id="horizontalCofres"></div>
+
+        <div class="card"
+             style="width:100%; flex-direction:row; justify-content:space-between; margin-top:10px;"
+             onclick="comprarCofres()">
+
+            <div style="display:flex; align-items:center; gap:15px;">
+
+                <img src="https://iili.io/BmAujQs.png" class="evo-img">
+
+                <div style="text-align:left;">
+                    <b id="cofresDisplay">1 Cofre Evo</b><br>
+                    <small style="color:#9ca3af;">
+                        Selecciona la cantidad
+                    </small>
+                </div>
+
+            </div>
+
+            <div class="btn-buy" id="precioCofres" style="width:90px;">
+                $7
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="section-title">
+        OFERTAS Y PASES
+    </div>
+
+    <div class="grid">
+
+        <div class="card" onclick="openPayment('Pase Booyah', '$27 MXN')">
+            <img src="https://iili.io/BmAY9JR.png" class="booyah-img">
+            <div class="info">
+                <span class="price">Pase Booyah</span>
+            </div>
+            <div class="btn-buy">$27 MXN</div>
+        </div>
+
+        <div class="card" onclick="openPayment('Portador del futuro', '$600 MXN')">
+            <img src="https://iili.io/CIadcHQ.png" class="skin-img">
+            <div class="info">
+                <span class="price">Portador del futuro</span>
+            </div>
+            <div class="btn-buy">$600 MXN</div>
+        </div>
+
+        <div class="card" onclick="openPayment('Fuerza de trueno', '$280 MXN')">
+            <img src="https://iili.io/CIaIz2S.png" class="skin-img">
+            <div class="info">
+                <span class="price">Fuerza de trueno</span>
+            </div>
+            <div class="btn-buy">$280 MXN</div>       
+        </div>
+
+    </div>
+
+</div>
+
+<!-- BOTÓN FLOTANTE DE CONTACTO -->
+<button class="btn-float-contact" onclick="openSupportModal()" title="Soporte y Dudas">
+    <i class="fab fa-telegram-plane"></i>
+</button>
+
+<!-- MODAL DE SOPORTE Y DUDAS -->
+<div id="supportModal" class="modal-overlay">
+
+    <div class="modal">
+
+        <div class="modal-header" style="background: linear-gradient(135deg, #0088cc, #005580);">
+            SOPORTE / CONSULTAS
+        </div>
+
+        <div class="modal-body">
+
+            <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 15px; text-align: center;">
+                Ingresa tus datos y tu duda o problema para contactarte a la brevedad.
+            </p>
+
+            <!-- INPUT DE CONTACTO -->
+            <input
+                type="text"
+                id="supportContact"
+                placeholder="Correo electrónico o usuario de Telegram"
+            >
+
+            <!-- TEXTAREA DE DUDAS O PROBLEMAS -->
+            <textarea
+                id="supportMessage"
+                placeholder="Escribe aquí tu duda, problema o consulta..."
+            ></textarea>
+
+            <button
+                class="btn-confirm"
+                id="btnSubmitSupport"
+                style="background: linear-gradient(135deg, #0088cc, #005580);"
+                onclick="enviarSoporte()">
+
+                ENVIAR MENSAJE
+
             </button>
-        </nav>
-        <nav class="nav-menu hidden" id="nav-garena">
-            <button onclick="switchView('streaming')" class="nav-link">
-                <i class="fas fa-film"></i> Streaming Shop
+
+            <button
+                onclick="closeSupportModal()"
+                style="
+                    width:100%;
+                    background:none;
+                    border:none;
+                    margin-top:15px;
+                    color:#9ca3af;
+                    cursor:pointer;
+                ">
+
+                Cancelar
+
             </button>
-        </nav>
 
-        <div class="status hide-mobile">● SERVIDOR ACTIVO</div>
-    </header>
-
-    <!-- ============================================== -->
-    <!-- VIEW: STREAMING SHOP -->
-    <!-- ============================================== -->
-    <main id="view-streaming" class="container">
-        <div class="section-title">PERFILES INDIVIDUALES (1 PANTALLA)</div>
-        <div class="grid">
-            <div class="card" onclick="openPayment('Perfil YouTube Premium', '$40 MXN', false)">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg" class="stream-img bg-white" alt="YouTube">
-                <div class="info"><span class="price">YouTube Premium</span></div>
-                <div class="btn-buy">$40 MXN</div>
-            </div>
-            <div class="card" onclick="openPayment('Perfil Prime Video', '$35 MXN', false)">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/f/f1/Prime_Video.png" class="stream-img bg-white" alt="Prime">
-                <div class="info"><span class="price">Prime Video</span></div>
-                <div class="btn-buy">$35 MXN</div>
-            </div>
-            <div class="card" onclick="openPayment('Perfil Max (HBO)', '$45 MXN', false)">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/c/ce/Max_logo.svg" class="stream-img bg-blue" alt="Max">
-                <div class="info"><span class="price">Max (HBO)</span></div>
-                <div class="btn-buy">$45 MXN</div>
-            </div>
-            <div class="card" onclick="openPayment('Perfil Disney+', '$45 MXN', false)">
-                <img src="https://i.pinimg.com/736x/06/8f/e4/068fe4ec6df8e57eb5e7934b915c4aa0.jpg" class="stream-img bg-dark" alt="Disney">
-                <div class="info"><span class="price">Disney+</span></div>
-                <div class="btn-buy">$45 MXN</div>
-            </div>
-            <div class="card" onclick="openPayment('Perfil ViX+', '$30 MXN', false)">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVrPCZP6zqVgCnYK6A1iuKc4e_4DMI5QTgHDRkidNZD578mTNVRVuph2iJ&s=10" class="stream-img bg-dark" alt="ViX">
-                <div class="info"><span class="price">ViX+</span></div>
-                <div class="btn-buy">$30 MXN</div>
-            </div>
-            <div class="card" onclick="openPayment('Perfil Prueba', '$50 MXN', false)">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXo2buTO5wlAF5uRSlnFZliSKQN2Ja1yrKkcTEJn0GkAvovjOkYWexHpMY&s=10" class="stream-img bg-dark" alt="Prueba">
-                <div class="info"><span class="price">Prueba</span></div>
-                <div class="btn-buy">$50 MXN</div>
-            </div>
         </div>
 
-        <div class="section-title">CUENTAS COMPLETAS</div>
-        <div class="grid">
-            <div class="card" onclick="openPayment('Cuenta Completa YouTube Premium', '$120 MXN', false)">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg" class="stream-img bg-white" alt="YouTube Completa">
-                <div class="info"><span class="price">YouTube Premium</span></div>
-                <div class="btn-buy">$120 MXN</div>
-            </div>
-            <div class="card" onclick="openPayment('Cuenta Completa Netflix Premium', '$190 MXN', false)">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" class="stream-img bg-dark" alt="Netflix">
-                <div class="info"><span class="price">Netflix Premium</span></div>
-                <div class="btn-buy">$190 MXN</div>
-            </div>
-            <div class="card" onclick="openPayment('Cuenta Completa Prime Video', '$100 MXN', false)">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/f/f1/Prime_Video.png" class="stream-img bg-white" alt="Prime Completa">
-                <div class="info"><span class="price">Prime Video</span></div>
-                <div class="btn-buy">$100 MXN</div>       
-            </div>
-        </div>
-    </main>
-
-    <!-- ============================================== -->
-    <!-- VIEW: GARENA SHOP -->
-    <!-- ============================================== -->
-    <main id="view-garena" class="container hidden">
-        <div class="section-title">PAQUETES DE DIAMANTES</div>
-        <div class="grid">
-            <div class="card" onclick="openPayment('110 Diamantes', '$18 MXN', true)">
-                <img src="https://iili.io/BmAodGV.png" class="gem-img" alt="110 Diamantes">
-                <div class="info"><span class="price">110 Diamantes</span></div>
-                <div class="btn-buy">$18 MXN</div>
-            </div>
-            <div class="card" onclick="openPayment('341 Diamantes', '$55 MXN', true)">
-                <img src="https://iili.io/BmAodGV.png" class="gem-img" alt="341 Diamantes">
-                <div class="info"><span class="price">341 Diamantes</span></div>
-                <div class="btn-buy">$55 MXN</div>
-            </div>
-            <div class="card" onclick="openPayment('572 Diamantes', '$95 MXN', true)">
-                <img src="https://iili.io/BmAodGV.png" class="gem-img" alt="572 Diamantes">
-                <div class="info"><span class="price">572 Diamantes</span></div>
-                <div class="btn-buy">$95 MXN</div>
-            </div>
-            <div class="card" onclick="openPayment('1166 Diamantes', '$175 MXN', true)">
-                <img src="https://iili.io/BmAodGV.png" class="gem-img" alt="1166 Diamantes">
-                <div class="info"><span class="price">1166 Diamantes</span></div>
-                <div class="btn-buy">$175 MXN</div>
-            </div>
-            
-            <!-- NUEVO PAQUETE AGREGADO -->
-            <div class="card" onclick="openPayment('2398 Diamantes', '$320 MXN', true)">
-                <img src="https://iili.io/BmAodGV.png" class="gem-img" alt="2398 Diamantes">
-                <div class="info"><span class="price">2398 Diamantes</span></div>
-                <div class="btn-buy">$320 MXN</div>
-            </div>
-
-            <div class="card" onclick="openPayment('6160 Diamantes', '$740 MXN', true)">
-                <img src="https://iili.io/BmAodGV.png" class="gem-img" alt="6160 Diamantes">
-                <div class="info"><span class="price">6160 Diamantes</span></div>
-                <div class="btn-buy">$740 MXN</div>
-            </div>
-        </div>
-
-        <div class="section-title">SELECCIÓN DE COFRES EVO</div>
-        <div class="cofres-section">
-            <div class="scroll-menu" id="horizontalCofres"></div>
-            <div class="card card-row" onclick="comprarCofres()">
-                <div class="flex-center" style="gap:15px;">
-                    <img src="https://iili.io/BmAujQs.png" class="evo-img" alt="Cofres Evo">
-                    <div>
-                        <b id="cofresDisplay">1 Cofre Evo</b><br>
-                        <small style="color:#9ca3af;">Selecciona la cantidad</small>
-                    </div>
-                </div>
-                <div class="btn-buy btn-buy-small" id="precioCofres">$7</div>
-            </div>
-        </div>
-
-        <div class="section-title">OFERTAS Y PASES</div>
-        <div class="grid">
-            <div class="card" onclick="openPayment('Pase Booyah', '$27 MXN', true)">
-                <img src="https://iili.io/BmAY9JR.png" class="booyah-img" alt="Pase Booyah">
-                <div class="info"><span class="price">Pase Booyah</span></div>
-                <div class="btn-buy">$27 MXN</div>
-            </div>
-            <div class="card" onclick="openPayment('Portador del futuro', '$600 MXN', true)">
-                <img src="https://iili.io/CIadcHQ.png" class="skin-img" alt="Portador del futuro">
-                <div class="info"><span class="price">Portador del futuro</span></div>
-                <div class="btn-buy">$600 MXN</div>
-            </div>
-            <div class="card" onclick="openPayment('Fuerza de trueno', '$280 MXN', true)">
-                <img src="https://iili.io/CIaIz2S.png" class="skin-img" alt="Fuerza de trueno">
-                <div class="info"><span class="price">Fuerza de trueno</span></div>
-                <div class="btn-buy">$280 MXN</div>       
-            </div>
-        </div>
-    </main>
-
-    <!-- ============================================== -->
-    <!-- BOTÓN FLOTANTE Y MODALES (COMPARTIDOS) -->
-    <!-- ============================================== -->
-    <button class="btn-float-contact" onclick="toggleModal('supportModal', true)" title="Soporte y Dudas">
-        <i class="fab fa-telegram-plane"></i>
-    </button>
-
-    <!-- MODAL SOPORTE -->
-    <div id="supportModal" class="modal-overlay">
-        <div class="modal">
-            <div class="modal-header modal-header-support">SOPORTE / CONSULTAS</div>
-            <div class="modal-body">
-                <p class="text-center" style="font-size: 0.85rem; color: var(--muted); margin-bottom: 15px;">
-                    Ingresa tus datos y tu duda o problema para contactarte a la brevedad.
-                </p>
-                <input type="text" id="supportContact" placeholder="Correo electrónico, WhatsApp o Telegram">
-                <textarea id="supportMessage" placeholder="Escribe aquí tu duda, problema o consulta..."></textarea>
-                <button class="btn-confirm btn-support-submit" id="btnSubmitSupport" onclick="enviarSoporte()">ENVIAR MENSAJE</button>
-                <button class="btn-cancel" onclick="toggleModal('supportModal', false)">Cancelar</button>
-            </div>
-        </div>
     </div>
 
-    <!-- MODAL PAGO -->
-    <div id="paymentModal" class="modal-overlay">
-        <div class="modal">
-            <div class="modal-header">REALIZAR PAGO</div>
-            <div class="modal-body">
-                <p class="modal-price-text">
-                    Total a pagar: <span id="modalPrice" class="modal-price-highlight">$0</span>
-                </p>
+</div>
 
-                <div class="payment-tabs">
-                    <button type="button" class="tab-btn active" onclick="selectPaymentMethod('transferencia')">
-                        <i class="fas fa-university"></i> Banco
-                    </button>
-                    <button type="button" class="tab-btn" onclick="selectPaymentMethod('paypal')">
-                        <i class="fab fa-paypal"></i> PayPal
-                    </button>
-                    <button type="button" class="tab-btn" onclick="selectPaymentMethod('oxxo')">
-                        <i class="fas fa-store"></i> Oxxo
-                    </button>
-                </div>
+<!-- MODAL DE PAGOS -->
+<div id="paymentModal" class="modal-overlay">
 
-                <div id="content-transferencia" class="payment-method-content active">
-                    <div class="payment-box">
-                        <small>TRANSFERENCIA BANCO A BANCO:</small><br><br>
-                        <b style="color:var(--primary); font-size: 1.1rem; letter-spacing: 0.5px;">012180015437078113</b>
-                    </div>
-                </div>
+    <div class="modal">
 
-                <div id="content-paypal" class="payment-method-content">
-                    <a href="https://www.paypal.me/virusTFF" target="_blank" class="btn-paypal">
-                        <i class="fab fa-paypal"></i> Pagar con PayPal
-                    </a>
-                </div>
-
-                <div id="content-oxxo" class="payment-method-content">
-                    <div class="payment-box">
-                        <small>PAGO EN OXXO (BBVA):</small><br><br>
-                        <b style="color:var(--warning); font-size: 1.1rem; letter-spacing: 0.5px;">Banco BBVA 4815163126419566</b>
-                    </div>
-                </div>
-
-                <hr class="divider">
-
-                <input type="text" id="contactDelivery" placeholder="Número de WhatsApp o Correo para entrega">
-                <input type="number" id="playerID" placeholder="ID de Jugador" class="hidden">
-
-                <label for="fileInput" class="file-upload-label" id="fileLabel">
-                    <i class="fas fa-camera"></i> <span id="labelText">Subir comprobante</span>
-                </label>
-                <input type="file" id="fileInput" class="hidden" accept="image/*" onchange="updateFileName()">
-
-                <button class="btn-confirm" id="btnSubmit" onclick="enviarPedido()">ENVIAR COMPROBANTE</button>
-                <button class="btn-cancel" onclick="toggleModal('paymentModal', false)">Cancelar</button>
-            </div>
+        <div class="modal-header">
+            REALIZAR PAGO
         </div>
+
+        <div class="modal-body">
+
+            <p style="text-align:center; font-weight:bold; margin-bottom:15px;">
+                Total:
+                <span id="modalPrice" style="color:var(--primary);">
+                    $0
+                </span>
+            </p>
+
+            <!-- 3 BOTONES DE SELECCIÓN DE MÉTODO -->
+            <div class="payment-tabs">
+                <button type="button" class="tab-btn active" onclick="selectPaymentMethod('transferencia')">
+                    <i class="fas fa-university"></i>
+                    Banco
+                </button>
+                <button type="button" class="tab-btn" onclick="selectPaymentMethod('paypal')">
+                    <i class="fab fa-paypal"></i>
+                    PayPal
+                </button>
+                <button type="button" class="tab-btn" onclick="selectPaymentMethod('oxxo')">
+                    <i class="fas fa-store"></i>
+                    Oxxo
+                </button>
+            </div>
+
+            <!-- CONTENEDORES DE INFORMACIÓN DINÁMICA -->
+            <div id="content-transferencia" class="payment-method-content active">
+                <div class="payment-box">
+                    <small>TRANSFERENCIA BANCO A BANCO:</small><br><br>
+                    <b style="color:var(--primary); font-size: 1.1rem; letter-spacing: 0.5px;">
+                        012180015437078113
+                    </b>
+                </div>
+            </div>
+
+            <div id="content-paypal" class="payment-method-content">
+                <a href="https://www.paypal.me/virusTFF" target="_blank" class="btn-paypal">
+                    <i class="fab fa-paypal"></i>
+                    Pagar con PayPal
+                </a>
+            </div>
+
+            <div id="content-oxxo" class="payment-method-content">
+                <div class="payment-box">
+                    <small>PAGO EN OXXO (BBVA):</small><br><br>
+                    <b style="color:var(--warning); font-size: 1.1rem; letter-spacing: 0.5px;">
+                        Banco BBVA 4815163126419566
+                    </b>
+                </div>
+            </div>
+
+            <hr style="margin:20px 0; border:0; border-top:1px solid rgba(255,255,255,.1);">
+
+            <!-- INPUT ID JUGADOR -->
+            <input
+                type="number"
+                id="playerID"
+                placeholder="ID de Jugador"
+            >
+
+            <!-- SUBIDA DE TICKET -->
+            <label for="fileInput"
+                   class="file-upload-label"
+                   id="fileLabel">
+
+                <i class="fas fa-camera"></i>
+                <span id="labelText">
+                    Subir comprobante
+                </span>
+
+            </label>
+
+            <input
+                type="file"
+                id="fileInput"
+                style="display:none"
+                accept="image/*"
+                onchange="updateFileName()"
+            >
+
+            <button
+                class="btn-confirm"
+                id="btnSubmit"
+                onclick="enviarPedido()">
+
+                ENVIAR COMPROBANTE
+
+            </button>
+
+            <button
+                onclick="closePayment()"
+                style="
+                    width:100%;
+                    background:none;
+                    border:none;
+                    margin-top:15px;
+                    color:#9ca3af;
+                    cursor:pointer;
+                ">
+
+                Cancelar
+
+            </button>
+
+        </div>
+
     </div>
 
-    <!-- MODAL ÉXITO -->
-    <div id="successModal" class="modal-overlay">
-        <div class="modal" style="max-width: 380px;">
-            <div class="modal-body text-center" style="padding: 35px 24px;">
-                <div class="success-icon-box"><i class="fas fa-check-circle"></i></div>
-                <h3 id="successTitle" class="success-title">¡Envío Exitoso!</h3>
-                <p id="successMessage" class="success-msg"></p>
-                <button class="btn-success-close" onclick="location.reload()">Entendido</button>
+</div>
+
+<div id="successModal" class="modal-overlay">
+    <div class="modal" style="max-width: 380px;">
+        <div class="modal-body" style="text-align: center; padding: 35px 24px;">
+            <div class="success-icon-box">
+                <i class="fas fa-check-circle"></i>
             </div>
+            <h3 id="successTitle" style="font-size: 1.4rem; font-weight: 900; margin-bottom: 10px;">¡Envío Exitoso!</h3>
+            <p id="successMessage" style="color: var(--muted); font-size: 0.95rem; line-height: 1.5;">
+                Tu pedido y comprobante han sido recibidos correctamente. Procesaremos tu recarga en breve.
+            </p>
+
+            <button class="btn-success-close" onclick="cerrarExitoYRecargar()">Entendido</button>
         </div>
     </div>
+</div>
 
-    <!-- ============================================== -->
-    <!-- SCRIPT JS UNIFICADO Y LIMPIO -->
-    <!-- ============================================== -->
-    <script>
-        // CONFIGURACIÓN DE SUPABASE
-        const SUPABASE_URL = "https://tftoowmdotyrkudnmfbp.supabase.co";
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmdG9vd21kb3R5cmt1ZG5tZmJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzMzQ0MDYsImV4cCI6MjEwNjkxMDQwNn0.S918-LPsvyp2Js4uY_kQxJi3YmLhEPdJMTm0Jn5Lg2w";
-        const EDGE_FUNCTION_URL = `${SUPABASE_URL}/functions/v1/enviar-telegram`;
+<script>
 
-        // ESTADO GLOBAL
-        const state = {
-            producto: "",
-            precio: "",
-            metodoPago: "transferencia",
-            esGarena: false,
-            cofresEvo: 1
-        };
+const SUPABASE_URL = "https://tftoowmdotyrkudnmfbp.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmdG9vd21kb3R5cmt1ZG5tZmJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzMzQ0MDYsImV4cCI6MjEwNjkxMDQwNn0.S918-LPsvyp2Js4uY_kQxJi3YmLhEPdJMTm0Jn5Lg2w";
 
-        // NAVEGACIÓN ENTRE VISTAS
-        function switchView(view) {
-            const isGarena = view === 'garena';
-            
-            document.getElementById('view-streaming').classList.toggle('hidden', isGarena);
-            document.getElementById('view-garena').classList.toggle('hidden', !isGarena);
-            document.getElementById('nav-streaming').classList.toggle('hidden', isGarena);
-            document.getElementById('nav-garena').classList.toggle('hidden', !isGarena);
-            
-            const banner = document.getElementById('main-banner');
-            banner.src = isGarena ? 'https://iili.io/CBvYfEP.png' : 'https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?q=80&w=2069&auto=format&fit=crop';
-            banner.style.opacity = isGarena ? '1' : '0.8';
-            
-            document.getElementById('main-title').innerHTML = isGarena 
-                ? '<i class="fas fa-bolt"></i> PAGOS SHOP' 
-                : '<i class="fas fa-play-circle"></i> STREAMING SHOP';
-            
-            window.scrollTo(0, 0);
+const EDGE_FUNCTION_URL = `${SUPABASE_URL}/functions/v1/enviar-telegram`;
+
+const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let curProd = "";
+let curPrec = "";
+let selectedCofres = 1;
+let currentMethod = "transferencia"; 
+
+const scrollMenu = document.getElementById('horizontalCofres');
+
+for(let i=1; i<=150; i++){
+    let chip = document.createElement('div');
+    chip.className = i === 1 ? 'chip active' : 'chip';
+    chip.innerText = i;
+    chip.onclick = function(){
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+        selectedCofres = i;
+        actualizarVisualCofres();
+    };
+    scrollMenu.appendChild(chip);
+}
+
+function actualizarVisualCofres(){
+    document.getElementById('cofresDisplay').innerText = `${selectedCofres} Cofres Evo`;
+    document.getElementById('precioCofres').innerText = `$${selectedCofres * 7} MXN`;
+}
+
+function comprarCofres(){
+    openPayment(`${selectedCofres} Cofres Evo`, `$${selectedCofres * 7} MXN`);
+}
+
+function selectPaymentMethod(method) {
+    currentMethod = method;
+    
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    
+    document.querySelectorAll('.payment-method-content').forEach(content => content.classList.remove('active'));
+    document.getElementById(`content-${method}`).classList.add('active');
+}
+
+function openPayment(p, pr){
+    curProd = p;
+    curPrec = pr;
+    document.getElementById('modalPrice').innerText = pr;
+    
+    selectPaymentMethod('transferencia');
+    document.querySelectorAll('.tab-btn')[0].classList.add('active');
+    
+    const inputID = document.getElementById('playerID');
+    inputID.placeholder = "ID de Jugador";
+    inputID.type = "number"; 
+    
+    document.getElementById('paymentModal').style.display = 'flex';
+}
+
+function closePayment(){
+    document.getElementById('paymentModal').style.display = 'none';
+}
+
+/* FUNCIONES DE MODAL DE SOPORTE */
+function openSupportModal() {
+    document.getElementById('supportContact').value = "";
+    document.getElementById('supportMessage').value = "";
+    document.getElementById('supportModal').style.display = 'flex';
+}
+
+function closeSupportModal() {
+    document.getElementById('supportModal').style.display = 'none';
+}
+
+// Actualizar nombre visual de archivo adjunto
+function updateFileName(){
+    const input = document.getElementById('fileInput');
+    if(input.files.length > 0){
+        document.getElementById('labelText').innerText = "✓ Ticket cargado";
+        document.getElementById('fileLabel').style.borderColor = "#00d26a";
+    }
+}
+
+function mostrarModalExito(titulo = "¡Envío Exitoso!", mensaje = "Tu pedido y comprobante han sido recibidos correctamente. Procesaremos tu recarga en breve.") {
+    document.getElementById('successTitle').innerText = titulo;
+    document.getElementById('successMessage').innerText = mensaje;
+    document.getElementById('successModal').style.display = 'flex';
+}
+
+function cerrarExitoYRecargar() {
+    document.getElementById('successModal').style.display = 'none';
+    location.reload();
+}
+
+function mostrarToast(mensaje, tipo = "error") {
+    const contenedor = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${tipo}`;
+    
+    const icono = tipo === 'error' ? 'fa-exclamation-circle' : 'fa-exclamation-triangle';
+    
+    toast.innerHTML = `
+        <i class="fas ${icono}"></i>
+        <span style="font-size: 0.9rem; font-weight: 500;">${mensaje}</span>
+    `;
+    
+    contenedor.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.animation = "none";
+        toast.offsetHeight; 
+        toast.style.transition = "0.3s opacity, 0.3s transform";
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(-20px)";
+        setTimeout(() => toast.remove(), 300);
+    }, 4000);
+}
+
+async function enviarPedido(){
+    const id = document.getElementById('playerID').value;
+    const file = document.getElementById('fileInput').files[0];
+    const btn = document.getElementById('btnSubmit');
+
+    if(id.length < 5){
+        mostrarToast("ID de Jugador inválido", "error");
+        return;
+    }
+
+    if(!file){
+        mostrarToast("Por favor, sube el comprobante", "warning");
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerText = "Verificando datos";
+
+    const metodoElegidoText = currentMethod.toUpperCase();
+
+    const mensajeTexto = `📦 NUEVO PEDIDO RECIBIDO 📦\n\n👤 ID Jugador: ${id}\n🛍️ Producto: ${curProd}\n💰 Precio: ${curPrec}\n💳 Método Usado: ${metodoElegidoText}`;
+
+    const formData = new FormData();
+    formData.append('texto', mensajeTexto);
+    formData.append('foto', file);
+
+    try {
+        const response = await fetch(EDGE_FUNCTION_URL, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${SUPABASE_KEY}`
+            },
+            body: formData
+        });
+
+        if(response.ok) {
+            closePayment();
+            mostrarModalExito("¡Envío Exitoso!", "Tu pedido y comprobante han sido recibidos correctamente. Procesaremos tu recarga en breve."); 
+        } else {
+            throw new Error("Error en la respuesta del servidor");
         }
 
-        // GENERAR MENÚ DE COFRES (Optimizando la carga con DocumentFragment)
-        const scrollMenu = document.getElementById('horizontalCofres');
-        const fragment = document.createDocumentFragment();
-        
-        for (let i = 1; i <= 150; i++) {
-            let chip = document.createElement('div');
-            chip.className = `chip ${i === 1 ? 'active' : ''}`;
-            chip.innerText = i;
-            chip.onclick = function() {
-                document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-                this.classList.add('active');
-                state.cofresEvo = i;
-                document.getElementById('cofresDisplay').innerText = `${state.cofresEvo} Cofres Evo`;
-                document.getElementById('precioCofres').innerText = `$${state.cofresEvo * 7} MXN`;
-            };
-            fragment.appendChild(chip);
-        }
-        scrollMenu.appendChild(fragment);
+    } catch(e) {
+        console.error(e);
+        mostrarToast("Error en el servidor. Intenta de nuevo.", "error");
+        btn.disabled = false;
+        btn.innerText = "ENVIAR COMPROBANTE";
+    }
+}
 
-        function comprarCofres() {
-            openPayment(`${state.cofresEvo} Cofres Evo`, `$${state.cofresEvo * 7} MXN`, true);
-        }
+async function enviarSoporte(){
+    const contact = document.getElementById('supportContact').value;
+    const msg = document.getElementById('supportMessage').value;
+    const btn = document.getElementById('btnSubmitSupport');
 
-        // GESTIÓN DE MODALES
-        function toggleModal(modalId, show) {
-            const modal = document.getElementById(modalId);
-            if (show) {
-                modal.classList.add('active');
-                if(modalId === 'supportModal'){
-                    document.getElementById('supportContact').value = "";
-                    document.getElementById('supportMessage').value = "";
-                }
-            } else {
-                modal.classList.remove('active');
-            }
-        }
+    if(contact.trim().length < 4){
+        mostrarToast("Ingresa un contacto válido (Correo/Telegram)", "warning");
+        return;
+    }
 
-        // LÓGICA DE PAGO
-        function selectPaymentMethod(method) {
-            state.metodoPago = method;
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-            document.querySelectorAll('.payment-method-content').forEach(content => content.classList.remove('active'));
-            document.getElementById(`content-${method}`).classList.add('active');
-        }
+    if(msg.trim().length < 5){
+        mostrarToast("Ingresa un mensaje más detallado", "warning");
+        return;
+    }
 
-        function openPayment(producto, precio, esGarenaItem) {
-            state.producto = producto;
-            state.precio = precio;
-            state.esGarena = esGarenaItem;
-            
-            document.getElementById('modalPrice').innerText = precio;
-            
-            const contactInput = document.getElementById('contactDelivery');
-            const idInput = document.getElementById('playerID');
-            
-            if (state.esGarena) {
-                contactInput.classList.add('hidden');
-                idInput.classList.remove('hidden');
-                idInput.value = '';
-            } else {
-                contactInput.classList.remove('hidden');
-                idInput.classList.add('hidden');
-                contactInput.value = '';
-            }
+    btn.disabled = true;
+    btn.innerText = "Enviando...";
 
-            selectPaymentMethod('transferencia');
-            document.querySelector('.tab-btn').classList.add('active'); // Seleccionar primera tab
-            toggleModal('paymentModal', true);
+    const mensajeTexto = `💬 NUEVA CONSULTA DE SOPORTE 💬\n\n📩 Contacto: ${contact}\n📝 Mensaje / Duda:\n${msg}`;
+
+    const formData = new FormData();
+    formData.append('texto', mensajeTexto);
+
+    try {
+        const response = await fetch(EDGE_FUNCTION_URL, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${SUPABASE_KEY}`
+            },
+            body: formData
+        });
+
+        if(response.ok) {
+            closeSupportModal();
+            mostrarModalExito("¡Mensaje Enviado!", "Tu consulta ha sido enviada con éxito. Nos pondremos en contacto contigo lo antes posible."); 
+        } else {
+            throw new Error("Error en la respuesta del servidor");
         }
 
-        // UTILIDADES DE UI
-        function updateFileName() {
-            const input = document.getElementById('fileInput');
-            if (input.files.length > 0) {
-                document.getElementById('labelText').innerText = "✓ Ticket cargado";
-                document.getElementById('fileLabel').style.borderColor = "var(--success)";
-            }
-        }
+    } catch(e) {
+        console.error(e);
+        mostrarToast("Error en el servidor. Intenta de nuevo.", "error");
+        btn.disabled = false;
+        btn.innerText = "ENVIAR MENSAJE";
+    }
+}
 
-        function mostrarModalExito(titulo, mensaje) {
-            document.getElementById('successTitle').innerText = titulo;
-            document.getElementById('successMessage').innerText = mensaje;
-            toggleModal('successModal', true);
-        }
+window.onclick = function(e){
+    const modal = document.getElementById('paymentModal');
+    const supportModal = document.getElementById('supportModal');
+    const successModal = document.getElementById('successModal');
+    if(e.target === modal){
+        closePayment();
+    }
+    if(e.target === supportModal){
+        closeSupportModal();
+    }
+    if(e.target === successModal){
+        cerrarExitoYRecargar();
+    }
+}
 
-        function mostrarToast(mensaje, tipo = "error") {
-            const contenedor = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${tipo}`;
-            const icono = tipo === 'error' ? 'fa-exclamation-circle' : 'fa-exclamation-triangle';
-            toast.innerHTML = `<i class="fas ${icono}"></i><span style="font-size: 0.9rem; font-weight: 500;">${mensaje}</span>`;
-            
-            contenedor.appendChild(toast);
-            setTimeout(() => {
-                toast.style.opacity = "0"; 
-                toast.style.transform = "translateY(-20px)";
-                setTimeout(() => toast.remove(), 300);
-            }, 4000);
-        }
+</script>
 
-        // ENVÍO DE DATOS A SUPABASE
-        async function enviarPedido() {
-            let datoContacto = "";
-            
-            if (state.esGarena) {
-                datoContacto = document.getElementById('playerID').value;
-                if (datoContacto.length < 5) return mostrarToast("ID de Jugador inválido", "error");
-            } else {
-                datoContacto = document.getElementById('contactDelivery').value;
-                if (datoContacto.trim().length < 8) return mostrarToast("Ingresa un WhatsApp o Correo válido", "warning");
-            }
-
-            const file = document.getElementById('fileInput').files[0];
-            if (!file) return mostrarToast("Por favor, sube el comprobante", "warning");
-
-            const btn = document.getElementById('btnSubmit');
-            btn.disabled = true; 
-            btn.innerText = "Verificando datos...";
-
-            const metodoElegidoText = state.metodoPago.toUpperCase();
-            const mensajeTexto = state.esGarena 
-                ? `📦 NUEVO PEDIDO RECIBIDO 📦\n\n👤 ID Jugador: ${datoContacto}\n🛍️ Producto: ${state.producto}\n💰 Precio: ${state.precio}\n💳 Método Usado: ${metodoElegidoText}`
-                : `📦 NUEVO PEDIDO STREAMING 📦\n\n📱 Contacto: ${datoContacto}\n🛍️ Producto: ${state.producto}\n💰 Precio: ${state.precio}\n💳 Método Usado: ${metodoElegidoText}`;
-
-            const formData = new FormData();
-            formData.append('texto', mensajeTexto);
-            formData.append('foto', file);
-
-            try {
-                const response = await fetch(EDGE_FUNCTION_URL, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${SUPABASE_KEY}` },
-                    body: formData
-                });
-
-                if (response.ok) {
-                    toggleModal('paymentModal', false);
-                    const msjExito = state.esGarena 
-                        ? "Tu pedido ha sido recibido. Procesaremos tu recarga en breve."
-                        : "Tu pedido ha sido recibido. Te enviaremos tu cuenta en breve.";
-                    mostrarModalExito("¡Envío Exitoso!", msjExito); 
-                } else { 
-                    throw new Error("Error en el servidor"); 
-                }
-            } catch (e) {
-                console.error(e);
-                mostrarToast("Error de conexión. Intenta de nuevo.", "error");
-            } finally {
-                btn.disabled = false; 
-                btn.innerText = "ENVIAR COMPROBANTE";
-            }
-        }
-
-        async function enviarSoporte() {
-            const contact = document.getElementById('supportContact').value;
-            const msg = document.getElementById('supportMessage').value;
-            const btn = document.getElementById('btnSubmitSupport');
-
-            if (contact.trim().length < 4) return mostrarToast("Ingresa un contacto válido", "warning");
-            if (msg.trim().length < 5) return mostrarToast("Ingresa un mensaje detallado", "warning");
-
-            btn.disabled = true; 
-            btn.innerText = "Enviando...";
-
-            const mensajeTexto = `💬 NUEVA CONSULTA DE SOPORTE 💬\n\n📩 Contacto: ${contact}\n📝 Mensaje / Duda:\n${msg}`;
-            const formData = new FormData(); 
-            formData.append('texto', mensajeTexto);
-
-            try {
-                const response = await fetch(EDGE_FUNCTION_URL, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${SUPABASE_KEY}` },
-                    body: formData
-                });
-
-                if (response.ok) {
-                    toggleModal('supportModal', false);
-                    mostrarModalExito("¡Mensaje Enviado!", "Tu consulta ha sido enviada con éxito. Nos contactaremos lo antes posible."); 
-                } else { 
-                    throw new Error("Error en el servidor"); 
-                }
-            } catch (e) {
-                console.error(e);
-                mostrarToast("Error de conexión. Intenta de nuevo.", "error");
-            } finally {
-                btn.disabled = false; 
-                btn.innerText = "ENVIAR MENSAJE";
-            }
-        }
-
-        // CERRAR MODALES AL HACER CLIC AFUERA
-        window.onclick = function(e) {
-            if (e.target.classList.contains('modal-overlay')) {
-                e.target.classList.remove('active');
-            }
-        }
-    </script>
 </body>
 </html>
